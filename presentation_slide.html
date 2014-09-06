@@ -1,0 +1,269 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<style>
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    color: #737373;
+    background-color: white;
+    margin: 10px 13px 10px 13px;
+}
+table {
+	margin: 10px 0 15px 0;
+	border-collapse: collapse;
+}
+td,th {	
+	border: 1px solid #ddd;
+	padding: 3px 10px;
+}
+th {
+	padding: 5px 10px;	
+}
+
+a {
+    color: #0069d6;
+}
+a:hover {
+    color: #0050a3;
+    text-decoration: none;
+}
+a img {
+    border: none;
+}
+p {
+    margin-bottom: 9px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #404040;
+    line-height: 36px;
+}
+h1 {
+    margin-bottom: 18px;
+    font-size: 30px;
+}
+h2 {
+    font-size: 24px;
+}
+h3 {
+    font-size: 18px;
+}
+h4 {
+    font-size: 16px;
+}
+h5 {
+    font-size: 14px;
+}
+h6 {
+    font-size: 13px;
+}
+hr {
+    margin: 0 0 19px;
+    border: 0;
+    border-bottom: 1px solid #ccc;
+}
+blockquote {
+    padding: 13px 13px 21px 15px;
+    margin-bottom: 18px;
+    font-family:georgia,serif;
+    font-style: italic;
+}
+blockquote:before {
+    content:"\201C";
+    font-size:40px;
+    margin-left:-10px;
+    font-family:georgia,serif;
+    color:#eee;
+}
+blockquote p {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 18px;
+    margin-bottom: 0;
+    font-style: italic;
+}
+code, pre {
+    font-family: Monaco, Andale Mono, Courier New, monospace;
+}
+code {
+    background-color: #fee9cc;
+    color: rgba(0, 0, 0, 0.75);
+    padding: 1px 3px;
+    font-size: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+pre {
+    display: block;
+    padding: 14px;
+    margin: 0 0 18px;
+    line-height: 16px;
+    font-size: 11px;
+    border: 1px solid #d9d9d9;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+pre code {
+    background-color: #fff;
+    color:#737373;
+    font-size: 11px;
+    padding: 0;
+}
+sup {
+    font-size: 0.83em;
+    vertical-align: super;
+    line-height: 0;
+}
+* {
+	-webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:10px auto;
+    }
+}
+@media print {
+	body,code,pre code,h1,h2,h3,h4,h5,h6 {
+		color: black;
+	}
+	table, pre {
+		page-break-inside: avoid;
+	}
+}
+</style>
+<title>CS5300 Fast Convergence PageRank in Hadoop</title>
+
+</head>
+<body>
+<h1>CS5300 Fast Convergence PageRank in Hadoop</h1>
+
+<p><img src="http://www.blue-granite.com/Portals/257922/images/hadoop-bigdata-transparent.png" alt="Mou icon" /></p>
+
+<h2>Overview</h2>
+
+<p>Implementing <strong>blocked pagerank</strong> to achieve better convergence. </br>
+<a href="http://edu-cornell-cs-cs5300s14-project2.s3.amazonaws.com/project2.html">http://edu-cornell-cs-cs5300s14-project2.s3.amazonaws.com/project2.html</a></p>
+
+<h2>Map Reduce Illustration</h2>
+
+<p><img src="http://img.my.csdn.net/uploads/201204/10/1334068675_4451.png" alt="Mou icon" /></p>
+
+<h3>Naive Page Rank</h3>
+
+<pre><code>class MAPPER
+    method MAP(nid n, node N)
+        p &lt;-- N.PageRank/|N.AdjacencyList|
+        EMIT(nid n, N)    
+        for all nodeid m from N.AdjacencyList do
+            EMIT(nid m, p)
+
+class REDUCER
+    method REDUCE(nid m, [p1,p2,...])
+        M &lt;-- NONE
+        for all p from counts[p1,p2,...] do
+            if IsNode(p) then
+                M &lt;-- p
+            else
+                s &lt;-- s + p
+        M.PAGERANK &lt;-- s
+        EMIT(nid m, node M)
+</code></pre>
+
+<h4>Naive PR Input Format</h4>
+
+<p>'nodeid PageRank Neighbour-List'</p>
+
+<h4>Naive PR Output Format</h4>
+
+<p>'nodeid PageRank'</p>
+
+<h4>Naive PR Code Description</h4>
+
+<h6>PageRank.java</h6>
+
+<p>Driven class to create Map Reduce Job and configure input/output path</p>
+
+<h6>Mapper.java</h6>
+
+<p>Implements Mapper class in above seudo code</p>
+
+<h6>Reduce.ava</h6>
+
+<p>Implements Reducer class in above seudo code</p>
+
+<h6>LeftoverMapper.java (optional)</h6>
+
+<p>Doing nothing, just pass data to LeftoverReducer</p>
+
+<h6>LeftoverReducer.java (optional)</h6>
+
+<p>Re-distributes Leftover mass</p>
+
+<h4>Naive PR Converge</h4>
+
+<p>PR not converge even after 12 passes</p>
+
+<h3>Blocked Page Rank</h3>
+
+<p>Each Reduce task loads its entire Block into memory and does multiple in-memory PageRank iterations on the Block, possibly even iterating until the Block has converged.</p>
+
+<h4>Blocked PR Input Format</h4>
+
+<p>'nodeid PageRank Neighbour-List'</p>
+
+<h4>Blocked PR Output Format</h4>
+
+<p>'nodeid PageRank'</p>
+
+<h4>Naive PR Code Description</h4>
+
+<h6>PageRank.java</h6>
+
+<p>Driven class. Create Map-Reduce until it converges. The residual is set to be 0.001.</p>
+
+<h6>TrustMapper.java</h6>
+
+<p>Doing nothing, just pass data to Reducer</p>
+
+<h6>TrustReducer.java</h6>
+
+<p>PageRank iteration over Block. In-block iteration number is set to be 5.</p>
+
+<h4>Blocked PR Converge</h4>
+
+<p>7 Passes until converge:
+Pass 1: 0.0705805572899
+Pass 2: 0.026460936968
+Pass 3: 0.00969286486241
+Pass 4: 0.00432837274331
+Pass 5: 0.00185918862238
+Pass 6: 9.515053339754535E-4</p>
+
+<p><img src="https://raw.githubusercontent.com/git254/image/master/b-con.png" alt="image" /></p>
+
+<h2>AWS EMR monitor</h2>
+
+<p><img src="https://raw.githubusercontent.com/git254/image/master/AWS.png" alt="image" /></p>
+</body>
+</html>

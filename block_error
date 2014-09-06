@@ -1,0 +1,14 @@
+Computation of residual error  between initial input file and stage0 file is skipped in our implementation
+
+stage 0 - stage 1
+0.0705805572899
+stage 1 - stage 2
+0.026460936968
+stage 2 - stage 3
+0.00969286486241
+stage 3 - stage 4
+0.00432837274331
+stage 4 - stage 5
+0.00185918862238
+stage 5 - stage 6
+9.515053339754535E-4
